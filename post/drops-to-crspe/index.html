@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://MisterDnuts.github.io/favicon.ico?v=1607397443734">
+<link rel="shortcut icon" href="https://MisterDnuts.github.io/favicon.ico?v=1607397771672">
 <link rel="stylesheet" href="https://MisterDnuts.github.io/styles/main.css">
 
 
@@ -18,8 +18,16 @@
 
 
 
-    <meta name="description" content="none
-" />
+    <meta name="description" content="部署
+环境准备(m.s)
+JAVA部署
+关闭防火墙
+systemctl stop firewalld
+systemctl disable firewalld
+
+关闭selinux：
+vi /etc/sysconfig/selinux
+SEL..." />
     <meta name="keywords" content="" />
   </head>
   <body>
@@ -29,7 +37,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://MisterDnuts.github.io">
-        <img src="https://MisterDnuts.github.io/images/avatar.png?v=1607397443734" class="site-logo">
+        <img src="https://MisterDnuts.github.io/images/avatar.png?v=1607397771672" class="site-logo">
         <h1 class="site-title">Atmosphere</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -95,7 +103,175 @@
             <div class="post-date">2020-12-08</div>
             
             <div class="post-content" v-pre>
-              <p>none</p>
+              <h1 id="部署">部署</h1>
+<h2 id="环境准备ms">环境准备(m.s)</h2>
+<h3 id="java部署">JAVA部署</h3>
+<h4 id="关闭防火墙">关闭防火墙</h4>
+<pre><code>systemctl stop firewalld
+systemctl disable firewalld
+</code></pre>
+<h4 id="关闭selinux">关闭selinux：</h4>
+<pre><code>vi /etc/sysconfig/selinux
+SELINUX=disabled
+</code></pre>
+<h4 id="安装java">安装java</h4>
+<blockquote>
+<p>解压至指定位置</p>
+</blockquote>
+<pre><code>tar -zxvf filename
+</code></pre>
+<blockquote>
+<p>配置变量</p>
+</blockquote>
+<pre><code>vi /etc/profile
+</code></pre>
+<pre><code>#java
+export JAVA_HOME='yourjavapath'
+export PATH=$JAVA_HOME/bin:$PATH
+</code></pre>
+<p>保存退出后，执行：</p>
+<pre><code>source /etc/profile
+</code></pre>
+<p>查看版本，确定环境变量是否生效</p>
+<pre><code>java -version
+</code></pre>
+<h3 id="配置ssh">配置ssh</h3>
+<blockquote>
+<p>安装ssh</p>
+</blockquote>
+<pre><code>yum install ssh
+</code></pre>
+<blockquote>
+<p>启动ssh</p>
+</blockquote>
+<pre><code>service sshd start
+</code></pre>
+<blockquote>
+<p>查看ssh进程</p>
+</blockquote>
+<pre><code>systemctl status sshd
+</code></pre>
+<blockquote>
+<blockquote>
+<h5 id="配置ssh免密登录">配置ssh免密登录</h5>
+<p>namenode生成密钥：</p>
+</blockquote>
+</blockquote>
+<pre><code>ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+</code></pre>
+<pre><code>ssh-keygen
+</code></pre>
+<blockquote>
+<blockquote>
+<p>此时在~/.ssh/目录下生成id_dsa.pub(/root/.ssh/id_rsa)文件</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>若希望master节点无需密码即可ssh连接到slave节点，需将master结点上的<sub>/.ssh/id_dsa.pub的内容，添加到slave节点</sub>/.ssh/authorized_keys中。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>若slave节点<sub>/.ssh/authorized_keys不存在，直接将</sub>/.ssh/id_dsa.pub文件复制过去并重命名为authorized_keys：</p>
+</blockquote>
+</blockquote>
+<pre><code>scp ~/.ssh/id_dsa.pub username@slavenode_ip:~/.ssh/authorized_keys
+</code></pre>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>若提示scp: /root/.ssh/authorized_keys: No such file or directory(~/.ssh)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>slave节点上:</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<pre><code>mkdir ~/.ssh/
+</code></pre>
+<h3 id="配置hosts">配置hosts</h3>
+<blockquote>
+<p>修改hostname</p>
+</blockquote>
+<pre><code>vi /etc/hostname
+</code></pre>
+<blockquote>
+<p>修改hosts（匹配ip与hostname映射关系）</p>
+</blockquote>
+<pre><code>vi /etc/hosts
+</code></pre>
+<p>例：</p>
+<pre><code>10.1.1.11	master
+10.1.1.21	slave-1
+10.1.1.22	slave-2
+</code></pre>
+<h2 id="组件部署">组件部署</h2>
+<h3 id="1-hadoop部署">1. Hadoop部署</h3>
+<h4 id="安装">安装</h4>
+<blockquote>
+<p>master中</p>
+<p>安装包解压到指定位置</p>
+</blockquote>
+<pre><code>tar -xzvf hadooppackage.tar.gz -C location
+</code></pre>
+<blockquote>
+<p>新建备用目录</p>
+</blockquote>
+<pre><code>mkdir  /root/hadoop
+mkdir  /root/hadoop/tmp
+mkdir  /root/hadoop/var
+mkdir  /root/hadoop/dfs
+mkdir  /root/hadoop/dfs/name
+mkdir  /root/hadoop/dfs/data
+</code></pre>
+<h4 id="配置变量">配置变量</h4>
+<blockquote>
+<ol>
+<li></li>
+</ol>
+</blockquote>
+<pre><code>&gt;vi  /hadooplocation/etc/hadoop/hadoop-env.sh
+export JAVA_HOME={$JAVA_HOME}
+</code></pre>
+<blockquote>
+<ol start="2">
+<li></li>
+</ol>
+</blockquote>
+<pre><code>vi yarn-env.sh
+</code></pre>
+<pre><code>#export JAVA_HOME=${JAVA_HOME}
+去掉#，改为
+export JAVA_HOME=/javapath
+说明：修改为自己的JDK路径。此处可以与系统JAVA环境一致，也可以单独配置。
+</code></pre>
+<blockquote>
+<ol start="3">
+<li></li>
+</ol>
+</blockquote>
+<p>修改core-site.xml</p>
+<pre><code>vi core-site.xml
+&lt;configuration&gt;
+	&lt;!-- 指定hdfs的nameservice为ns --&gt;
+    &lt;!--单一namenode使用fs.default.name--&gt;
+    &lt;!--否则使用fs.defaultFS--&gt;
+    &lt;property&gt;
+　　　　&lt;name&gt;fs.default.name&lt;/name&gt;
+　　　　&lt;value&gt;hdfs://master:9000&lt;/value&gt;
+    &lt;/property&gt;
+	&lt;property&gt;
+    &lt;!--指定hadoop数据临时存放目录--&gt;
+　　　　&lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+　　　　&lt;value&gt;/root/hadoop/tmp&lt;/value&gt;
+　　&lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
 
             </div>
             
