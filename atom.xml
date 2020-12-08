@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://MisterDnuts.github.io</id>
     <title>Atmosphere</title>
-    <updated>2020-12-08T03:03:04.437Z</updated>
+    <updated>2020-12-08T03:11:31.876Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://MisterDnuts.github.io"/>
     <link rel="self" href="https://MisterDnuts.github.io/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://MisterDnuts.github.io/images/avatar.png</logo>
     <icon>https://MisterDnuts.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Atmosphere</rights>
+    <entry>
+        <title type="html"><![CDATA[drops to crspe]]></title>
+        <id>https://MisterDnuts.github.io/post/drops-to-crspe/</id>
+        <link href="https://MisterDnuts.github.io/post/drops-to-crspe/">
+        </link>
+        <updated>2020-12-08T03:09:57.000Z</updated>
+        <content type="html"><![CDATA[<p>none</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://MisterDnuts.github.io/post/hello-gridea/</id>
